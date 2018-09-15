@@ -13,7 +13,7 @@ class ModelDateTime(models.Model):
 	
 	class Meta:
 		abstract = True
-		manage = False
+		managed = False
 	
 
 class TblUser(User, ModelDateTime):
@@ -27,9 +27,9 @@ class TblUser(User, ModelDateTime):
 		db_table = 'tbl_user'
 
 
-
 class TblNewsFeed(ModelDateTime):
-	url = models.TextField()
+	title = models.TextField(null=False, blank=False, default='')
+	url = models.TextField(null=False, blank=False)
 	hacker_news_url = models.TextField()
 	posted_on = models.DateTimeField()
 	upvotes = models.IntegerField(default=0)
@@ -37,12 +37,16 @@ class TblNewsFeed(ModelDateTime):
 	total_views = models.IntegerField(default=0)
 	total_blocked_by = models.IntegerField(default=0)
 	
-
 	class Meta:
 		db_table = 'tbl_news_feed'
 
 
 class TblReadBlockNews(ModelDateTime):
 	user = models.ForeignKey(TblUser, null=False, blank=False)
-	news_feed = models.ForeignKey(TblNewsFeed, null=False, blank=False)
+	news_feed = models.ForeignKey(TblNewsFeed, on_delete=models.CASCADE, null=False, blank=False)
+	action = models.IntegerField(default=1, help_text='1: read, 2:block')
+	
+	class Meta:
+		unique_together = (('user', 'news_feed', 'action'), )
+		db_table = 'tbl_read_block_news'
 		
