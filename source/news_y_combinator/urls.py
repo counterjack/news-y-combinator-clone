@@ -19,8 +19,11 @@ from users.views_cluster import login
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^news-feed/login/$', login.login),
+    url(r'^news-feed/login/$', login._login),
+    url(r'^news-feed/logout/$', login._logout),
     url(r'^news-feed/register/$', login.register),
-    url(r'^news-feed/home/$', login.home)
-    #url(r'^news-feed/', include('users.urls')),
+    url(r'^news-feed/home/$', login.home),
+    url(r'^news-feed/update-read-views/$', login.update_read_views),
+    url(r'^news-feed/block-news-feed/$', login.read_block_news_feed),
+
 ]

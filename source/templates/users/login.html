@@ -1,0 +1,72 @@
+{% load static %}
+<html>
+<head>
+	<link rel='text/stylesheet' src=''>
+	<style>
+		body{
+			color: white;	
+		}
+	</style>
+</head>
+
+<body background= "{% static 'images/Fotolia_88433541_Subscription_Monthly_M.jpg' %}" style="content-align:center">
+
+<div class="col-sm-12">
+	<h3>News Combinator </h3>
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4">
+		<form method="POST" enctype='multipart/form-data' >
+			{% csrf_token %}
+			<div>Username : <input type='text' name='username' id="username" required></div><br>
+			<div>Password : <input type='password' name='password' id="password" required></div><br>
+			<input type='submit' id="sbt_btn" value="Submit">
+		</form>
+		<div>
+			<p id="error"></p>
+		</div>
+	</div>
+
+	<div class="col-sm-4"></div>
+</div>
+
+</body>
+
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script>
+
+	$("#sbt_btn").click(function(event){
+		event.preventDefault();
+		var username = $("#username").val();
+		var password = $("#password").val();
+		var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
+		var data = {
+			'username': username,
+			'password': password,
+			'csrfmiddlewaretoken': csrfmiddlewaretoken
+		}
+
+
+		$.ajax({
+			url: '/news-feed/login/',
+			type: 'POST',
+			data : JSON.stringify(data),
+			success: function(resp){
+				console.log(resp);
+				console.log(resp.status);
+				if ( resp.status == 1 ){
+					window.location = '/news-feed/home/';
+				}
+				else{
+				$("#error").html("Invalid Username or Password");
+				}
+
+			},
+			error: function(resp){
+				console.log(resp);
+			}
+		});
+
+	});
+</script>
+</html>

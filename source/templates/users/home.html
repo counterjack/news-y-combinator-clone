@@ -1,0 +1,141 @@
+{% load static %}
+<html>
+<head>
+	<link rel='text/stylesheet' src=''>
+	<style>
+		body{
+			color: black;	
+		}
+	</style>
+</head>
+
+<body  style="content-align:center; background-color:#f6f6ef; margin-left:20%; margin-right:20%">
+
+<div class="col-sm-12">
+	<p style="height:40px; background-color:#ff7f50;line-height:35px;">
+		<span style=""> <b>News Combinator </b></span>
+		<span style="float:right"> <a href="/news-feed/logout"> || 	 Sign Out </a></span>
+		<span style="float:right">  {{ request.user }} &nbsp;&nbsp;</span>
+
+	</p>
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4">
+		<table>
+
+			{% for feed in news_feeds %}
+			<tr>
+				<td class="title" valign="top" align="right">
+					<span class="rank">{{ forloop.counter }}.</span>
+				</td>
+				<td class="votelinks" valign="top">
+					<center>
+						<a id="up_17968349" href="vote?id=17968349&amp;how=up&amp;goto=news%3Fp%3D17">
+							<div class="votearrow" title="upvote"></div>
+						</a>
+					</center>
+				</td>
+				<td class="title">
+					<a href="https://www.theverge.com/2018/9/12/17850146/microsoft-windows-10-chrome-firefox-warning"
+					   class="storylink" onclick="return updateViews({{ feed.id }});"  target="_blank	">
+						{{ feed.title }}
+					</a>
+					&nbsp;&nbsp;&nbsp;<span><button onclick="ReadBlockFeed({{ feed.id }}, 2)"> Block Me</button></span>
+					&nbsp;&nbsp;&nbsp;<span><button onclick="ReadBlockFeed({{ feed.id }}, 1)"> Mark Me Read</button></span>
+				</td>
+
+			<tr>
+				<td colspan="2"></td>
+				<td class="subtext">
+					<span class="score" id="score_17978045">{{ feed.upvotes }} points</span> by
+					<a href="user?id=uptown" class="hnuser">uptown</a>
+					<span class="age"><a href="item?id=17978045">{{ feed.posted_on }}</a></span>
+					<span id="unv_17978045"></span>
+					| <a href="hide?id=17978045&amp;goto=news%3Fp%3D17">hide</a>
+					| <a href="item?id=17978045"> {{ feed.total_comments }}&nbsp;comments</a>
+				</td>
+			</tr>
+
+			{% endfor %}
+		</table>
+	</div>
+
+	<div class="col-sm-4"></div>
+</div>
+
+</body>
+
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+		integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script>
+
+	var updateViews = function(feed_id){
+
+		var data = {
+			'news_id': feed_id,
+		}
+
+		$.ajax({
+			url: '/news-feed/update-read-views/',
+			type: 'POST',
+			data : JSON.stringify(data),
+			success: function(resp){
+				if ( resp.status == 1 ){
+					console.log('News feed views updated');
+					return true;
+				}
+				else{
+					console.log('Error updating in news feed');
+					return true;
+				}
+
+			},
+			error: function(resp){
+				console.log(resp);
+			}
+		});
+		return true;
+	
+	}
+
+	var ReadBlockFeed= function(feed_id, action){
+	if (action == 2 ){
+		var resp = confirm("Are you sure to block this post ?");
+	}else{
+		var resp = confirm("Are you sure to Mark Read this post ?");
+	}
+		if (resp){
+			var data = {
+				'news_id': feed_id,
+				'action': action
+
+			}
+
+			$.ajax({
+				url: '/news-feed/block-news-feed/',
+				type: 'POST',
+				data : JSON.stringify(data),
+				success: function(resp){
+					if ( resp.status == 1 ){
+						window.location.reload();
+
+					}
+					else{
+						alert('Error blocking in news feed');
+						return true;
+					}
+
+				},
+				error: function(resp){
+					console.log(resp);
+				}
+			});
+			return true;
+		}
+		else{
+			return true
+			}
+
+	}
+</script>
+</html>
